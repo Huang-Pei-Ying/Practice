@@ -90,18 +90,18 @@ class MXR:
         print(f'[{inst_name}] Connect successfully! / {idn}')
 
     def RF_threshold(self, rf_top, rf_base):
-        if int_gen_thres.get() == 1:
+        if int_rf_thres.get() == 1:
+            self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,T1090')
+            # self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:PERCent ALL,90,10')
+        elif int_rf_thres.get() == 2:
+            self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,T2080')
+            # self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:PERCent ALL,80,20')
+        elif int_rf_thres.get() == 3:
             self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,PERCent')
-            self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:PERCent ALL,90,10')
-        elif int_gen_thres.get() == 2:
-            self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,PERCent')
-            self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:PERCent ALL,80,20')
-        elif int_gen_thres.get() == 3:
-            self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,PERCent')
-            self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:PERCent ALL,70,30')
-        elif int_gen_thres.get() == 4:
+            self.inst.write(f':MEASure:THResholds:RFALl:PERCent ALL,70,50,30')
+        elif int_rf_thres.get() == 4:
             self.inst.write(f':MEASure:THResholds:RFALl:METHod ALL,ABSolute')
-            self.inst.write(f':MEASure:THResholds:RFALl:TOPBase:ABSolute ALL,{rf_top},{rf_base}')
+            self.inst.write(f':MEASure:THResholds:RFALl:ABSolute ALL,{rf_top},{(float(rf_top)+float(rf_base))/2},{rf_base}')
 
     def gen_threshold(self, g_top, g_middle, g_base):
         if int_gen_thres.get() == 1:
@@ -115,7 +115,7 @@ class MXR:
             self.inst.write(f':MEASure:THResholds:GENeral:PERCent ALL,70,50,30')
         elif int_gen_thres.get() == 4:
             self.inst.write(f':MEASure:THResholds:GENeral:METHod ALL,ABSolute')
-            self.inst.write(f':MEASure:THResholds:ABSolute ALL,{g_top},{g_middle},{g_base}')
+            self.inst.write(f':MEASure:THResholds:GENeral:ABSolute ALL,{g_top},{g_middle},{g_base}')
 
     def volt_check(self, scale, offset): # 科學記號
         # res_ch1= self.inst.query(f':CHANnel1:DISPlay?')
@@ -274,6 +274,15 @@ class MXR:
         for i, boolvar in enumerate(tuple_marker):
             if boolvar.get():
                 self.inst.write(f':MARKer:MEASurement:MEASurement MEASurement{i+1},ON')
+    
+    def delete_marker(self):
+        tuple_marker = (boolvar_marker_1, boolvar_marker_2, boolvar_marker_3, boolvar_marker_4, boolvar_marker_5, boolvar_marker_6, 
+                        boolvar_marker_7, boolvar_marker_8, boolvar_marker_9, boolvar_marker_10, boolvar_marker_11, boolvar_marker_12, 
+                        )
+    
+        for i, boolvar in enumerate(tuple_marker):
+            if boolvar.get():
+                self.inst.write(f':MARKer:MEASurement:MEASurement MEASurement{i+1},OFF')
 
     def add_label(self, chan, label):
         res= self.judge_chan_wme(chan= chan)
@@ -574,13 +583,13 @@ if __name__ == '__main__':
 
     b_default = tk.Button(label_frame_control, text='Default', width= 20, height= 2, command= lambda: mxr.default())
 
-    # b_trigger = tk.Button(label_frame_control, text='Trigger Type', width= 20, height= 2, command= lambda: mxr.trig_type())
+    b_trigger = tk.Button(label_frame_control, text='Trigger Type', width= 20, height= 2, command= lambda: mxr.trig_type())
     
     b_del = tk.Button(label_frame_control, text='Delete item', width= 20, height= 2, command= lambda: mxr.delete_item())
 
-    b_marker = tk.Button(label_frame_control, text='Add Marker', width= 20, height= 2, command= lambda: mxr.add_marker())
+    b_add_marker = tk.Button(label_frame_control, text='Add Marker', width= 20, height= 2, command= lambda: mxr.add_marker())
 
-    b_trigger = tk.Button(label_frame_control, text='Trigger Type', width= 20, height= 2, command= lambda: mxr.trig_type())
+    b_del_marker = tk.Button(label_frame_control, text='Del Marker', width= 20, height= 2, command= lambda: mxr.delete_marker())
 
     boolvar_marker_1 = tk.BooleanVar()    
     cb_marker_1= tk.Checkbutton(label_frame_control, text= 'Meas1', variable= boolvar_marker_1)
@@ -801,10 +810,10 @@ if __name__ == '__main__':
     b_single.grid(row= 0, column= 2, padx= 5, pady= 5, rowspan= 2)
     b_autoscale.grid(row= 2, column= 0, padx= 5, pady= 5, rowspan= 2)
     b_default.grid(row= 2, column= 1, padx= 5, pady= 5, rowspan= 2)
-    # b_trigger.grid(row= 2, column= 2, padx= 5, pady= 5, rowspan= 2)
     b_trigger.grid(row= 2, column= 2, padx= 5, pady= 5, rowspan= 2)
     b_del.grid(row= 4, column= 0, padx= 5, pady= 5, rowspan= 2)
-    b_marker.grid(row= 4, column= 1, padx= 5, pady= 5, rowspan= 2)
+    b_add_marker.grid(row= 4, column= 1, padx= 5, pady= 5, rowspan= 2)
+    b_del_marker.grid(row= 4, column= 2, padx= 5, pady= 5, rowspan= 2)
     cb_marker_1.grid(row= 0, column= 3, padx= 5) 
     cb_marker_2.grid(row= 1, column= 3, padx= 5) 
     cb_marker_3.grid(row= 2, column= 3, padx= 5) 
