@@ -294,19 +294,16 @@ class MXR:
         self.inst.write(f':WMEMory{chan}:CLEar')
         string.set('')
 
-    def save_waveform(self, folder, image_name, pc_folder):
+    def save_waveform_scope(self, folder, image_name):
         self.inst.write(f':DISK:SAVE:IMAGe "C:/Users/Administrator/Desktop/{folder}/{image_name}",PNG,SCReen,OFF,NORMal,OFF')
 
+    def save_waveform_pc(self, folder, pc_folder, image_name, ):
         full_path = f"C:/Users/Administrator/Desktop/{folder}/{image_name}.png"
-        res_err= self.inst.query(f':SYSTem:ERRor? STRing')
-        if not res_err == '':
-            return
         data = b''
         message = ':DISK:GETFILE? "' + full_path + '"'
         data = self.inst.query_binary_values(message= message, datatype= 'B', header_fmt= 'ieee', container= bytes)
         
         ensure_directory_exists(directory_path= f"{pc_folder}")
-        
         with open(f"{pc_folder}/{image_name}.png", 'wb') as f:
             f.write(data)
 
@@ -388,7 +385,7 @@ if __name__ == '__main__':
 
     window = tk.Tk()
     window.title('MXR Button')
-    window.geometry('1300x755+2+2')
+    window.geometry('1350x755+2+2')
 
 # Measurement Frame ===================================================================================================================================
 
@@ -656,26 +653,27 @@ if __name__ == '__main__':
     e_image_folder = tk.Entry(label_frame_save, width= 50, textvariable= str_image_folder)
     # str_image_folder.set(f'{folder_name}')
 
-    l_image_folder = tk.Label(label_frame_save, text= 'Waveform Scope folder\n(填Desktop之後的資料夾路徑)')
+    l_image_folder = tk.Label(label_frame_save, text= 'Waveform Scope folder [填Desktop之後的資料夾路徑]')
 
     str_image_pc_folder = tk.StringVar()
     e_image_pc_folder2 = tk.Entry(label_frame_save, width= 50, textvariable= str_image_pc_folder)
     # str_image_pc_folder.set(r"C:\Users\11102230\Desktop")
     
-    l_image_pc_folder = tk.Label(label_frame_save, text= 'Waveform PC folder\n(填存在筆電的資料夾路徑)')
+    l_image_pc_folder = tk.Label(label_frame_save, text= 'Waveform PC folder [填存在筆電的資料夾路徑]')
 
     str_image = tk.StringVar()
     e_image = tk.Entry(label_frame_save, width= 50, textvariable= str_image)
 
     l_imagename = tk.Label(label_frame_save, text= '(填 圖檔名)')
 
-    b_image_save = tk.Button(label_frame_save, text= 'Save Waveform', command= lambda: mxr.save_waveform(folder= str_image_folder.get(), image_name= str_image.get(), pc_folder= str_image_pc_folder.get()))
+    b_image_save_scope = tk.Button(label_frame_save, text= 'Save Image-Scope', command= lambda: mxr.save_waveform_scope(folder= str_image_folder.get(), image_name= str_image.get()))
+    b_image_save_pc = tk.Button(label_frame_save, text= 'Save Image-PC', command= lambda: mxr.save_waveform_pc(folder= str_image_folder.get(), image_name= str_image.get(), pc_folder= str_image_pc_folder.get()))
 
     str_WMe_folder = tk.StringVar()
     e_WMe_folder = tk.Entry(label_frame_save, width= 50, textvariable= str_WMe_folder)
     # str_WMe_folder.set(f'{folder_name}/waveform_files')
 
-    l_WMe_folder = tk.Label(label_frame_save, text= 'WMemory Scope folder\n(填Desktop之後的資料夾路徑)')
+    l_WMe_folder = tk.Label(label_frame_save, text= 'WMemory Scope folder [填Desktop之後的資料夾路徑]')
     
     str_WMe = tk.StringVar()
     e_WMe = tk.Entry(label_frame_save, width= 50, textvariable= str_WMe)
@@ -867,48 +865,57 @@ if __name__ == '__main__':
 # Save grid
     e_image_folder.grid(row= 0, column= 0, 
                         padx= 5, 
-                        # pady= 5, 
+                        pady= 5, 
                         # columnspan= 3
                         )
     l_image_folder.grid(row=0, column= 1,
-                        columnspan= 2, 
-                        # padx= 5, pady= 5
+                        columnspan= 3, 
+                        sticky= 'w',
+                        padx= 5, pady= 5
                         )
     e_image_pc_folder2.grid(row= 1, column= 0, 
                             padx= 5, 
-                            # pady= 5, 
+                            pady= 5, 
                             # columnspan= 3
                             )
     l_image_pc_folder.grid(row= 1, column= 1, 
-                           columnspan= 2, 
-                        #    padx= 5, pady= 5
+                           columnspan= 3, 
+                           sticky= 'w',
+                           padx= 5, pady= 5
                            )
     e_image.grid(row= 2, column= 0, 
                  padx= 5, 
-                # pady= 5, 
+                pady= 5, 
                 #  columnspan= 3
                  )
     l_imagename.grid(row= 2, column= 1, sticky= 'w')
-    b_image_save.grid(row=2, column= 2,
-                    #   padx= 5, pady= 5
+    b_image_save_scope.grid(row=2, column= 2,
+                      padx= 5, pady= 5,
+                    sticky= 'w',
                       )
+    b_image_save_pc.grid(row= 2, column= 3,
+                         sticky= 'w',
+                          padx= 5, 
+                          pady= 5,
+                         )
     e_WMe_folder.grid(row= 3, column= 0, 
                       padx= 5, 
-                    # pady= 5, 
+                    pady= 5, 
                     #   columnspan= 3
                       )
     l_WMe_folder.grid(row=3, column= 1, 
-                      columnspan= 2,
-                    #   padx= 5, pady= 5
+                      columnspan= 3,
+                      sticky= 'w',
+                      padx= 5, pady= 5
                       )
     e_WMe.grid(row= 4, column= 0, sticky= 'w',
                padx= 5, 
-            # pady= 5, 
+            pady= 5, 
             #    columnspan= 3
                )
     l_WMename.grid(row= 4, column= 1, sticky= 'w')
     b_WMe_save.grid(row=4, column= 2,
-                    # padx= 5, pady= 5
+                    padx= 5, pady= 5
                     )
 
 #LoadWMe grid
