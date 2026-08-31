@@ -356,12 +356,13 @@ def main_window(scope_ip):
                 time.sleep(0.05)
 
             c=0
+            self.inst.write(f"SYSTem:CONTrol 'MeasSetupSrc1EdgeByRef -{1} on'")
+            time.sleep(0.05)
+            self.inst.write(f"SYSTem:CONTrol 'DoMeas -{1}'")
+            time.sleep(0.05)
             for i, boolvar in enumerate(tuple_marker):
                 if boolvar.get():
-                    self.inst.write(f"SYSTem:CONTrol 'MeasSetupSrc1EdgeByRef -{i+1} on'")
-                    time.sleep(0.05)
-                    self.inst.write(f"SYSTem:CONTrol 'DoMeas -{i+1}'")
-                    time.sleep(0.05)
+
                     self.inst.write(f':MARKer:MEASurement:MEASurement MEAS{i+1},ON')
                     time.sleep(0.05)
                     self.inst.write(f':MARKer{2*c+1}:COLor "{color_list[c]}"')
