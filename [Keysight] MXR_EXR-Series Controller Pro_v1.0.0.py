@@ -225,9 +225,9 @@ def main_window(scope_ip):
         SetupFileClass = config_initial['Load_WMemory_Setup_Config']['SetupFileClass']
         LoadSetup = config_initial['Load_WMemory_Setup_Config']['LoadSetup']
 
-        ScopeSegment = config_initial['Scope_Server_Segment']['ScopeSegment']
-        PCSegment = config_initial['Scope_Server_Segment']['PCSegment']
-        Segment= [ScopeSegment, PCSegment]
+        # ScopeSegment = config_initial['Scope_Server_Segment']['ScopeSegment']
+        # PCSegment = config_initial['Scope_Server_Segment']['PCSegment']
+        # Segment= [ScopeSegment, PCSegment]
 
         # strvar_voltage_scale.set(value= select_VoltScale)
         # strvar_voltage_offset.set(value= select_VoltOffset)
@@ -296,7 +296,7 @@ def main_window(scope_ip):
         # move_mouse_entry_end(entry= entry_wmemory_folder)
         # move_mouse_entry_end(entry= entry_wmemory_pc_folder)
     
-        return Segment
+        # return Segment
 
 
     class MXR:
@@ -1776,6 +1776,12 @@ def main_window(scope_ip):
         RFBasePercent_options = config_initial['Threshold_Setup_Config'].get('RFBasePercent', '').split(',')
         RFTopValue_options = config_initial['Threshold_Setup_Config'].get('RFTopValue', '').split(',')
         RFBaseValue_options = config_initial['Threshold_Setup_Config'].get('RFBaseValue', '').split(',')
+
+        # Scope Segment
+        SaveOthersScopeSegment_options = config_initial['Scope_Server_Segment'].get('SaveOthersScopeSegment', '').split(',')
+        LoadWmemoryScopeSegment_options = config_initial['Scope_Server_Segment'].get('LoadWmemoryScopeSegment', '').split(',')
+        LoadSetupScopeSegment_options = config_initial['Scope_Server_Segment'].get('LoadSetupScopeSegment', '').split(',')
+
         # 從這裡返回值供其他部分調用
         return {
             'VoltScale': VoltScale_options, 
@@ -1791,6 +1797,9 @@ def main_window(scope_ip):
             'RFBasePercent': RFBasePercent_options, 
             'RFTopValue': RFTopValue_options, 
             'RFBaseValue': RFBaseValue_options, 
+            'SaveOthersScopeSegment': SaveOthersScopeSegment_options,
+            'LoadWmemoryScopeSegment': LoadWmemoryScopeSegment_options,
+            'LoadSetupScopeSegment': LoadSetupScopeSegment_options,
             
             'config_file': config_file,  # 儲存config文件路徑以便後續使用
 
@@ -1808,6 +1817,9 @@ def main_window(scope_ip):
                 'RFBasePercent': config_initial['Threshold_Selected_Values'].get('RFBasePercent', ''),
                 'RFTopValue': config_initial['Threshold_Selected_Values'].get('RFTopValue', ''),
                 'RFBaseValue': config_initial['Threshold_Selected_Values'].get('RFBaseValue', ''),
+                'SaveOthersScopeSegment': config_initial['Scope_Server_Segment_Selected_Values'].get('SaveOthersScopeSegment', ''),
+                'LoadWmemoryScopeSegment': config_initial['Scope_Server_Segment_Selected_Values'].get('LoadWmemoryScopeSegment', ''),
+                'LoadSetupScopeSegment': config_initial['Scope_Server_Segment_Selected_Values'].get('LoadSetupScopeSegment', ''),
                 }        
         }
 
@@ -2023,6 +2035,7 @@ def main_window(scope_ip):
     
     # 設定style ========================================================================================================================================================================
     style = ttk.Style(window)
+    # style.theme_use('alt')
 
     # 顏色表 (name -> (bg, fg, select))
     colors = {
@@ -2170,7 +2183,7 @@ def main_window(scope_ip):
     # voltage_scale
     button_voltage_scale = ttk.Button(
         master= frame_scalearea_top, text= 'Voltage Scale (V)', width= button_width_scale_area,  padding= 1, 
-        # style= 'normal_height.TButton',
+        style= 'normal_height.TButton',
         # command= lambda: mxr.
         )
     
@@ -2662,7 +2675,7 @@ def main_window(scope_ip):
         background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
         ) 
 
-    boolvar_modify_delta_name= tk.StringVar()
+    boolvar_modify_delta_name= tk.BooleanVar()
     checkbutton_modify_delta_name= ttk.Checkbutton(
         master= frame_measurement_base_left, text= 'Modify Name', variable= boolvar_modify_delta_name, 
     )
@@ -2784,28 +2797,358 @@ def main_window(scope_ip):
         # style= 'double_height.TButton',
         # command= lambda: mxr.
         )
+    button_add_marker= ttk.Button(
+        master= frame_marker_left, text= 'Add Marker', width= button_width_scale_area,  padding= 2,
+        # style= 'double_height.TButton',
+        # command= lambda: mxr.
+        )
+    button_delete_marker= ttk.Button(
+        master= frame_marker_left, text= 'Delete Marker', width= button_width_scale_area,  padding= 2,
+        # style= 'double_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    boolvar_multi_color_marker= tk.BooleanVar()
+    checkbutton_multi_color_marker= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Multi-Color Marker', variable= boolvar_multi_color_marker, 
+    )
+    
+    boolvar_measurement_1= tk.BooleanVar()
+    checkbutton_marker_1= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 1', variable= boolvar_measurement_1, 
+    )
+    boolvar_measurement_2= tk.BooleanVar()
+    checkbutton_marker_2= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 2', variable= boolvar_measurement_2, 
+    )
+    boolvar_measurement_3= tk.BooleanVar()
+    checkbutton_marker_3= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 3', variable= boolvar_measurement_3, 
+    )
+    boolvar_measurement_4= tk.BooleanVar()
+    checkbutton_marker_4= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 4', variable= boolvar_measurement_4, 
+    )
+    boolvar_measurement_5= tk.BooleanVar()
+    checkbutton_marker_5= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 5', variable= boolvar_measurement_5, 
+    )
+    boolvar_measurement_6= tk.BooleanVar()
+    checkbutton_marker_6= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 6', variable= boolvar_measurement_6, 
+    )
+    boolvar_measurement_7= tk.BooleanVar()
+    checkbutton_marker_7= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 7', variable= boolvar_measurement_7, 
+    )
+    boolvar_measurement_8= tk.BooleanVar()
+    checkbutton_marker_8= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 8', variable= boolvar_measurement_8, 
+    )
+    boolvar_measurement_9= tk.BooleanVar()
+    checkbutton_marker_9= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 9', variable= boolvar_measurement_9, 
+    )
+    boolvar_measurement_10= tk.BooleanVar()
+    checkbutton_marker_10= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 10', variable= boolvar_measurement_10, 
+    )
+    boolvar_measurement_11= tk.BooleanVar()
+    checkbutton_marker_11= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 11', variable= boolvar_measurement_11, 
+    )
+    boolvar_measurement_12= tk.BooleanVar()
+    checkbutton_marker_12= ttk.Checkbutton(
+        master= frame_marker_right, text= 'Measurement 12', variable= boolvar_measurement_12, 
+    )
 
-
-
-
-
-
-
-
+    ################################################
     # Label/Bookmark  ===================================================================================================================================
     labelframe_label_bookmark= tk.LabelFrame(master= frame_right_bottom_left, text= 'Label/Bookmark', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
 
-    # Save Image – in PC  ===================================================================================================================================
+    frame_label_bookmark_top= tk.Frame(master= labelframe_label_bookmark, background= colors['labelframe'][0])
+    frame_label_bookmark_base= tk.Frame(master= labelframe_label_bookmark, background= colors['labelframe'][0])
+    
+    intvar_label_type= tk.IntVar()
+    radiobutton_label= ttk.Radiobutton(
+        master= frame_label_bookmark_top, text= 'Label', value= 0, variable= intvar_label_type, style= 'radiobutton_3.TRadiobutton')
+    radiobutton_bookmark= ttk.Radiobutton(
+        master= frame_label_bookmark_top, text= 'Bookmark', value= 1, variable= intvar_label_type, style= 'radiobutton_3.TRadiobutton')
+    
+    button_label_channel_1_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Channel 1', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        command= lambda: switch_string(var_1= strvar_delta_position_start, var_2= strvar_delta_position_stop)
+        )
+    strvar_label_channel_1= tk.StringVar()
+    entry_label_channel_1= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_channel_1, justify= 'center')
+    button_label_channel_1_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_channel_2_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Channel 2', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_channel_2= tk.StringVar()
+    entry_label_channel_2= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_channel_2, justify= 'center')
+    button_label_channel_2_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_channel_3_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Channel 3', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_channel_3= tk.StringVar()
+    entry_label_channel_3= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_channel_3, justify= 'center')
+    button_label_channel_3_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_channel_4_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Channel 4', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_channel_4= tk.StringVar()
+    entry_label_channel_4= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_channel_4, justify= 'center')
+    button_label_channel_4_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_wmemory_1_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Wmemory 1', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_wmemory_1= tk.StringVar()
+    entry_label_wmemory_1= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_wmemory_1, justify= 'center')
+    button_label_wmemory_1_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_wmemory_2_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Wmemory 2', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_wmemory_2= tk.StringVar()
+    entry_label_wmemory_2= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_wmemory_2, justify= 'center')
+    button_label_wmemory_2_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_wmemory_3_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Wmemory 3', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_wmemory_3= tk.StringVar()
+    entry_label_wmemory_3= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_wmemory_3, justify= 'center')
+    button_label_wmemory_3_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    button_label_wmemory_4_ckeck= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Wmemory 4', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    strvar_label_wememory_4= tk.StringVar()
+    entry_label_wmemory_4= ttk.Entry(
+        master= frame_label_bookmark_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_label_wememory_4, justify= 'center')
+    button_label_wmemory_4_delete= ttk.Button(
+        master= frame_label_bookmark_base, text= 'Delete', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    
+    ################################################
+    # Save Image – in PC  =====button_label_wememory_4_delete==============================================================================================================================
     labelframe_save_image= tk.LabelFrame(master= frame_right_bottom_left, text= 'Save Image in PC', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
 
+    label_save_img_pcfolder= tk.Label(
+        master= labelframe_save_image, text= 'PC Folder', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_save_img_pcfolder= tk.StringVar()
+    entry_save_img_pcfolder= ttk.Entry(
+        master= labelframe_save_image, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_img_pcfolder)
+    button_browse_img_pcfolder= ttk.Button(
+        master= labelframe_save_image, text= 'Browse', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    label_save_img_name= tk.Label(
+        master= labelframe_save_image, text= 'File Name', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_save_img_name= tk.StringVar()
+    entry_save_img_name= ttk.Entry(
+        master= labelframe_save_image, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_img_name)
+    button_save_img_name= ttk.Button(
+        master= labelframe_save_image, text= 'Save', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    ################################################
     # Save Others – in Scope  ===================================================================================================================================
     labelframe_save_others= tk.LabelFrame(master= frame_right_bottom_right, text= 'Save Others in Scope', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
 
-    # Load Waveform  ===================================================================================================================================
-    labelframe_load_waveform= tk.LabelFrame(master= frame_right_bottom_right, text= 'Load Waveform', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
+    frame_save_others_top= tk.Frame(master= labelframe_save_others, background= colors['labelframe'][0])
+    frame_save_others_base= tk.Frame(master= labelframe_save_others, background= colors['labelframe'][0])
+    
+    intvar_save_others_savelocation= tk.IntVar()
+    radiobutton_save_others_scopedesktop= ttk.Radiobutton(
+        master= frame_save_others_top, text= 'Scope Desktop', value= 0, variable= intvar_save_others_savelocation, style= 'radiobutton_2.TRadiobutton')
+    radiobutton_save_others_server= ttk.Radiobutton(
+        master= frame_save_others_top, text= 'Server', value= 1, variable= intvar_save_others_savelocation, style= 'radiobutton_2.TRadiobutton')
+    
+    strvar_save_others_server_segment= tk.StringVar()
+    combobox_save_others_server_segment= ttk.Combobox(
+        master= frame_save_others_top, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_others_server_segment, style= 'TCombobox', justify= 'center')
+    execute_commbobox_function(
+        combobox= combobox_save_others_server_segment, combobox_var= strvar_save_others_server_segment, ini_dict_key= 'SaveOthersScopeSegment', ini_option_section= 'Scope_Server_Segment', ini_option_key= 'SaveOthersScopeSegment', ini_selected_section= 'Scope_Server_Segment_Selected_Values')
+    
+    intvar_save_others_filetype= tk.IntVar()
+    radiobutton_save_others_wfmfile= ttk.Radiobutton(
+        master= frame_save_others_top, text= 'Waveform File', value= 0, variable= intvar_save_others_filetype, style= 'radiobutton_3.TRadiobutton')
+    radiobutton_save_others_setupfile= ttk.Radiobutton(
+        master= frame_save_others_top, text= 'Setup File', value= 1, variable= intvar_save_others_filetype, style= 'radiobutton_3.TRadiobutton')
 
-    # Load Setup  ===================================================================================================================================
+    label_save_others_scopefolder= tk.Label(
+        master= frame_save_others_base, text= 'Folder', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_save_others_scopefolder= tk.StringVar()
+    entry_save_others_scopefolder= ttk.Entry(
+        master= frame_save_others_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_others_scopefolder)
+    button_save_others_browse_scopefolder= ttk.Button(
+        master= frame_save_others_base, text= 'Browse', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    label_save_others_channel= tk.Label(
+        master= frame_save_others_base, text= 'Channel', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_save_others_channel= tk.StringVar()
+    combobox_save_others_channel= ttk.Combobox(
+        master= frame_save_others_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_others_channel, style= 'TCombobox', justify= 'center', 
+        values= ['1', '2', '3', '4']
+        )
+
+    label_save_others_filename= tk.Label(
+        master= frame_save_others_base, text= 'File Name', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_save_others_filename= tk.StringVar()
+    entry_save_others_filename= ttk.Entry(
+        master= frame_save_others_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_save_others_filename)
+    button_save_others_filename_save= ttk.Button(
+        master= frame_save_others_base, text= 'Save', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    ################################################
+    # Load Wmemoey  ===================================================================================================================================
+    labelframe_load_waveform= tk.LabelFrame(master= frame_right_bottom_right, text= 'Load Wmemory', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
+
+    frame_load_waveform_top= tk.Frame(master= labelframe_load_waveform, background= colors['labelframe'][0])
+    frame_load_waveform_base= tk.Frame(master= labelframe_load_waveform, background= colors['labelframe'][0])
+
+    intvar_load_waveform_savelocation= tk.IntVar()
+    radiobutton_load_waveform_scopedesktop= ttk.Radiobutton(
+        master= frame_load_waveform_top, text= 'Scope Desktop', value= 0, variable= intvar_load_waveform_savelocation, style= 'radiobutton_2.TRadiobutton')
+    radiobutton_load_waveform_server= ttk.Radiobutton(
+        master= frame_load_waveform_top, text= 'Server', value= 1, variable= intvar_load_waveform_savelocation, style= 'radiobutton_2.TRadiobutton')
+    
+    strvar_load_waveform_server_segment= tk.StringVar()
+    combobox_load_waveform_server_segment= ttk.Combobox(
+        master= frame_load_waveform_top, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_waveform_server_segment, style= 'TCombobox', justify= 'center')
+    execute_commbobox_function(
+        combobox= combobox_load_waveform_server_segment, combobox_var= strvar_load_waveform_server_segment, ini_dict_key= 'LoadWmemoryScopeSegment', ini_option_section= 'Scope_Server_Segment', ini_option_key= 'LoadWmemoryScopeSegment', ini_selected_section= 'Scope_Server_Segment_Selected_Values')
+
+    label_load_waveform_scopefolder= tk.Label(
+        master= frame_load_waveform_base, text= 'Folder', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_load_waveform_scopefolder= tk.StringVar()
+    entry_load_waveform_scopefolder= ttk.Entry(
+        master= frame_load_waveform_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_waveform_scopefolder)
+    button_load_waveform_browse_scopefolder= ttk.Button(
+        master= frame_load_waveform_base, text= 'Browse', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    label_load_waveform_wmemory= tk.Label(
+        master= frame_load_waveform_base, text= 'Wmemory', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_load_waveform_wmemory= tk.StringVar()
+    combobox_load_waveform_wmemory= ttk.Combobox(
+        master= frame_load_waveform_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_waveform_wmemory, style= 'TCombobox', justify= 'center', 
+        values= ['1', '2', '3', '4']
+        )
+
+    label_load_waveform_filename= tk.Label(
+        master= frame_load_waveform_base, text= 'File Name', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
+    strvar_load_waveform_filename= tk.StringVar()
+    entry_load_waveform_filename= ttk.Entry(
+        master= frame_load_waveform_base, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_waveform_filename)
+    button_load_waveform_filename_load= ttk.Button(
+        master= frame_load_waveform_base, text= 'Load', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+    button_load_waveform_filename_clear= ttk.Button(
+        master= frame_load_waveform_base, text= 'Clear', width= button_width_scale_area,  padding= 1,
+        # style= 'normal_height.TButton',
+        # command= lambda: mxr.
+        )
+
+    ################################################
+    # Load Setup File ===================================================================================================================================
     labelframe_load_setup= tk.LabelFrame(master= frame_right_bottom_right, text= 'Load Setup', background= colors['labelframe'][0], fg= colors['labelframe'][1], font= ('Candara', 10, 'bold'),)
+
+    frame_load_setup_1= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
+    frame_load_setup_2= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
+    frame_load_setup_3= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
+    frame_load_setup_4= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
+
+
+
+
+
+
+
+
+
+
+
 
 
     # Weight  ==============================================================================================================================================
@@ -2920,9 +3263,85 @@ def main_window(scope_ip):
 
     frame_measurement_base_right.rowconfigure(0, weight= 1, uniform= 'row')
     frame_measurement_base_right.columnconfigure(0, weight= 1, uniform= 'col')
-
     ###########################
     ### marker
+    labelframe_marker.rowconfigure(0, weight= 1, uniform= 'row')
+    labelframe_marker.columnconfigure(0, weight= 1, uniform= 'col')
+    labelframe_marker.columnconfigure(1, weight= 2, uniform= 'col')
+
+    for i in range(3):
+        frame_marker_left.rowconfigure(i, weight= 1, uniform= 'row')
+    frame_marker_left.columnconfigure(0, weight= 1, uniform= 'col')
+    for i in range(7):
+        frame_marker_right.rowconfigure(i, weight= 1, uniform= 'row')
+    frame_marker_right.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_marker_right.columnconfigure(1, weight= 1, uniform= 'col')
+    ###########################
+    ### label/bookmark
+    labelframe_label_bookmark.rowconfigure(0, weight= 1, uniform= 'row')
+    labelframe_label_bookmark.rowconfigure(1, weight= 4, uniform= 'row')
+    labelframe_label_bookmark.columnconfigure(0, weight= 1, uniform= 'col')
+
+    frame_label_bookmark_top.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_label_bookmark_top.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_label_bookmark_top.columnconfigure(1, weight= 5, uniform= 'col')
+
+    for i in range(4):
+        frame_label_bookmark_base.rowconfigure(i, weight= 1, uniform= 'row')
+    for j in range(6):
+        if j%3 == 0:
+            frame_label_bookmark_base.columnconfigure(j, weight= 2, uniform= 'col')
+        elif j%3 == 1:
+            frame_label_bookmark_base.columnconfigure(j, weight= 5, uniform= 'col')
+        else:
+            frame_label_bookmark_base.columnconfigure(j, weight= 1, uniform= 'col')
+    ###########################
+    ### save Image – in PC
+    labelframe_save_image.rowconfigure(0, weight= 1, uniform= 'row')
+    labelframe_save_image.rowconfigure(1, weight= 1, uniform= 'row')
+    labelframe_save_image.columnconfigure(0, weight= 1, uniform= 'col')
+    labelframe_save_image.columnconfigure(1, weight= 5, uniform= 'col')
+    labelframe_save_image.columnconfigure(2, weight= 1, uniform= 'col')
+    ###########################
+    ### save Others – in Scope
+    labelframe_save_others.rowconfigure(0, weight= 1, uniform= 'row')
+    labelframe_save_others.rowconfigure(1, weight= 1, uniform= 'row')
+    labelframe_save_others.columnconfigure(0, weight= 1, uniform= 'col')
+
+    frame_save_others_top.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_save_others_top.rowconfigure(1, weight= 1, uniform= 'row')
+    frame_save_others_top.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_save_others_top.columnconfigure(1, weight= 1, uniform= 'col')
+    frame_save_others_top.columnconfigure(2, weight= 2, uniform= 'col')
+
+    frame_save_others_base.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_save_others_base.rowconfigure(1, weight= 1, uniform= 'row')
+    frame_save_others_base.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_save_others_base.columnconfigure(1, weight= 1, uniform= 'col')
+    frame_save_others_base.columnconfigure(2, weight= 1, uniform= 'col')
+    frame_save_others_base.columnconfigure(3, weight= 3, uniform= 'col')
+    frame_save_others_base.columnconfigure(4, weight= 1, uniform= 'col')
+    ###########################
+    ### load wmemory
+    labelframe_load_waveform.rowconfigure(0, weight= 1, uniform= 'row')
+    labelframe_load_waveform.rowconfigure(1, weight= 2, uniform= 'row')
+    labelframe_load_waveform.columnconfigure(0, weight= 1, uniform= 'col')
+
+    frame_load_waveform_top.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_waveform_top.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_load_waveform_top.columnconfigure(1, weight= 1, uniform= 'col')
+    frame_load_waveform_top.columnconfigure(2, weight= 2, uniform= 'col')
+
+    frame_load_waveform_base.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_waveform_base.rowconfigure(1, weight= 1, uniform= 'row')
+    frame_load_waveform_base.columnconfigure(0, weight= 2, uniform= 'col')
+    frame_load_waveform_base.columnconfigure(1, weight= 2, uniform= 'col')
+    frame_load_waveform_base.columnconfigure(2, weight= 2, uniform= 'col')
+    frame_load_waveform_base.columnconfigure(3, weight= 4, uniform= 'col')
+    frame_load_waveform_base.columnconfigure(4, weight= 1, uniform= 'col')
+    frame_load_waveform_base.columnconfigure(5, weight= 1, uniform= 'col')
+    ###########################
+    ### load setup
 
 
 
@@ -2930,7 +3349,15 @@ def main_window(scope_ip):
 
 
 
-    
+
+
+
+
+
+
+
+
+
     
     # Left Grid  ==============================================================================================================================================
     labelframe_scale_offset_trigger.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
@@ -3111,38 +3538,122 @@ def main_window(scope_ip):
     button_measurement_deltatime.grid(row= 0, column= 0, padx= 30, pady= 30, sticky= 'nesw')
     
     ###########################
+    ### Marker ==============================================================================================================================================
+    frame_marker_left.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_marker_right.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_delete_measurement.grid(row= 0, column= 0, padx= 5, pady= 5, sticky= 'nesw')
+    button_add_marker.grid(row= 1, column= 0, padx= 5, pady= 5, sticky= 'nesw')
+    button_delete_marker.grid(row= 2, column= 0, padx= 5, pady= 5, sticky= 'nesw')
 
+    checkbutton_multi_color_marker.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw', columnspan= 2)
 
+    checkbutton_marker_1.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_2.grid(row= 2, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_3.grid(row= 3, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_4.grid(row= 4, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_5.grid(row= 5, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_6.grid(row= 6, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_7.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_8.grid(row= 2, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_9.grid(row= 3, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_10.grid(row= 4, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_11.grid(row= 5, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_marker_12.grid(row= 6, column= 1, padx= 2, pady= 2, sticky= 'nesw')
 
+    ###########################
+    ### Label/Bookmark ==============================================================================================================================================
+    frame_label_bookmark_top.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_label_bookmark_base.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
 
+    radiobutton_label.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_bookmark.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_channel_1_ckeck.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_channel_1.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_channel_1_delete.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_channel_2_ckeck.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_channel_2.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_channel_2_delete.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_channel_3_ckeck.grid(row= 2, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_channel_3.grid(row= 2, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_channel_3_delete.grid(row= 2, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_channel_4_ckeck.grid(row= 3, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_channel_4.grid(row= 3, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_channel_4_delete.grid(row= 3, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_wmemory_1_ckeck.grid(row= 0, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_wmemory_1.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_wmemory_1_delete.grid(row= 0, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_wmemory_2_ckeck.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_wmemory_2.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_wmemory_2_delete.grid(row= 1, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_wmemory_3_ckeck.grid(row= 2, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_wmemory_3.grid(row= 2, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_wmemory_3_delete.grid(row= 2, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
+    button_label_wmemory_4_ckeck.grid(row= 3, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    entry_label_wmemory_4.grid(row= 3, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    button_label_wmemory_4_delete.grid(row= 3, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
+    ###########################
+    ### Save Image – in PC ==============================================================================================================================================
+    label_save_img_pcfolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_img_pcfolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_browse_img_pcfolder.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nesw')
+    
+    label_save_img_name.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_img_name.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    button_save_img_name.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
+    ###########################
+    ### Save Others – in Scope ==============================================================================================================================================
+    frame_save_others_top.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_save_others_base.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
 
+    radiobutton_save_others_scopedesktop.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_save_others_server.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_save_others_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nsw')
 
+    radiobutton_save_others_wfmfile.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_save_others_setupfile.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
 
+    label_save_others_scopefolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_others_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw', columnspan= 3)
+    button_save_others_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'nesw')
 
+    label_save_others_channel.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_save_others_channel.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    
+    label_save_others_filename.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_others_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    button_save_others_filename_save.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
 
+    ###########################
+    ### Load Wmemory ==============================================================================================================================================
+    frame_load_waveform_top.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_load_waveform_base.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
 
+    radiobutton_load_waveform_scopedesktop.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_load_waveform_server.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_load_waveform_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nsw')
 
+    label_load_waveform_scopefolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_load_waveform_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw', columnspan= 3)
+    button_load_waveform_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'nesw', columnspan= 2)
 
-
-
-
-
-
-
-
-
-
+    label_load_waveform_wmemory.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_load_waveform_wmemory.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    
+    label_load_waveform_filename.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
+    entry_load_waveform_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'nesw')
+    button_load_waveform_filename_load.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    button_load_waveform_filename_clear.grid(row= 1, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
 
 
