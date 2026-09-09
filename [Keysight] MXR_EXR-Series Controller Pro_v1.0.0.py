@@ -3139,16 +3139,59 @@ def main_window(scope_ip):
     frame_load_setup_3= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
     frame_load_setup_4= tk.Frame(master= labelframe_load_setup, background= colors['labelframe'][0])
 
+    intvar_load_setup_call_file_type= tk.IntVar()
+    radiobutton_load_setup_user_defined= ttk.Radiobutton(
+        master= frame_load_setup_1, text= 'User-defined', value= 0, variable= intvar_load_setup_call_file_type, style= 'radiobutton_1.TRadiobutton')
+    radiobutton_load_setup_standard= ttk.Radiobutton(
+        master= frame_load_setup_1, text= 'Standard', value= 1, variable= intvar_load_setup_call_file_type, style= 'radiobutton_1.TRadiobutton')
 
+    intvar_load_setup_loadlocation= tk.IntVar()
+    radiobutton_load_setup_loacation_scope= ttk.Radiobutton(
+        master= frame_load_setup_2, text= 'Scope Desktop', value= 0, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
+    radiobutton_load_setup_loacation_server= ttk.Radiobutton(
+        master= frame_load_setup_2, text= 'Server', value= 1, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
 
+    combobox_load_setup_loacation_server= ttk.Combobox()
 
+    label_load_setup_user_defined_folder= tk.Label(
 
+    )
+    strvar_load_setup_user_defined_folder= tk.StringVar()
+    entry_load_setup_user_defined_folder= ttk.Entry(
+        master= frame_load_setup_2, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_user_defined_folder)
+    button_load_setup_user_defined_browse= ttk.Button(
+        master= frame_load_setup_2, text= 'Browse', width= button_width_scale_area,  padding= 1,)
 
+    label_load_setup_user_defined_filename= tk.Label(
 
+    )
+    strvar_load_setup_user_defined_filename= tk.StringVar()
+    entry_load_setup_user_defined_filename= ttk.Entry(
+        master= frame_load_setup_2, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_user_defined_filename)
+    button_load_setup_user_defined_load= ttk.Button(
+        master= frame_load_setup_2, text= 'Load', width= button_width_scale_area,  padding= 1,)
 
+    boolvar_modify_label= tk.BooleanVar()
+    checkbutton_modify_label= ttk.Checkbutton(
+        master= frame_load_setup_3, text= 'Label', variable= boolvar_modify_label)
+    boolvar_modify_timebase= tk.BooleanVar()
+    checkbutton_modify_timebase= ttk.Checkbutton(
+        master= frame_load_setup_3, text= 'Time', variable= boolvar_modify_timebase)
+    boolvar_modify_voltage= tk.BooleanVar()
+    checkbutton_modify_voltage= ttk.Checkbutton(
+        master= frame_load_setup_3, text= 'Voltage', variable= boolvar_modify_voltage)
 
+    combobox_load_setup_standard_interface= ttk.Combobox(
+        
+    )
+    combobox_load_setup_standard_subfolder= ttk.Combobox(
 
+    )
+    combobox_load_setup_standard_files= ttk.Combobox(
 
+    )
+    button_load_setup_standard_load= ttk.Button(
+        master= frame_load_setup_4, text= 'Load', width= button_width_scale_area,  padding= 1,)
 
 
     # Weight  ==============================================================================================================================================
@@ -3342,21 +3385,36 @@ def main_window(scope_ip):
     frame_load_waveform_base.columnconfigure(5, weight= 1, uniform= 'col')
     ###########################
     ### load setup
+    labelframe_load_setup.rowconfigure(0, weight= 2, uniform= 'row')
+    labelframe_load_setup.rowconfigure(1, weight= 2, uniform= 'row')
+    labelframe_load_setup.rowconfigure(2, weight= 1, uniform= 'row')
+    labelframe_load_setup.rowconfigure(3, weight= 1, uniform= 'row')
+    labelframe_load_setup.columnconfigure(0, weight= 1, uniform= 'col')
 
+    frame_load_setup_1.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_setup_1.rowconfigure(1, weight= 1, uniform= 'row')
+    frame_load_setup_1.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_load_setup_1.columnconfigure(1, weight= 1, uniform= 'col')
+    frame_load_setup_1.columnconfigure(2, weight= 1, uniform= 'col')
 
+    frame_load_setup_2.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_setup_2.rowconfigure(1, weight= 1, uniform= 'row')
+    frame_load_setup_2.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_load_setup_2.columnconfigure(1, weight= 6, uniform= 'col')
+    frame_load_setup_2.columnconfigure(2, weight= 1, uniform= 'col')
 
+    frame_load_setup_3.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_setup_3.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_load_setup_3.columnconfigure(1, weight= 1, uniform= 'col')
+    frame_load_setup_3.columnconfigure(2, weight= 1, uniform= 'col')
 
-
-
-
-
-
-
-
-
-
-
-
+    frame_load_setup_4.rowconfigure(0, weight= 1, uniform= 'row')
+    frame_load_setup_4.columnconfigure(0, weight= 1, uniform= 'col')
+    frame_load_setup_4.columnconfigure(1, weight= 4, uniform= 'col')
+    frame_load_setup_4.columnconfigure(2, weight= 2, uniform= 'col')
+    frame_load_setup_4.columnconfigure(3, weight= 1, uniform= 'col')
+    ###########################
+    ###########################
 
     
     # Left Grid  ==============================================================================================================================================
@@ -3655,10 +3713,36 @@ def main_window(scope_ip):
     button_load_waveform_filename_load.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
     button_load_waveform_filename_clear.grid(row= 1, column= 5, padx= 2, pady= 2, sticky= 'nesw')
 
+    ###########################
+    ### Load Setup ==============================================================================================================================================
+    frame_load_setup_1
+    frame_load_setup_2
+    frame_load_setup_3
+    frame_load_setup_4
 
+    radiobutton_load_setup_user_defined
+    radiobutton_load_setup_standard
 
+    radiobutton_load_setup_loacation_scope
+    radiobutton_load_setup_loacation_server
+    combobox_load_setup_loacation_server
 
+    label_load_setup_user_defined_folder
+    entry_load_setup_user_defined_folder
+    button_load_setup_user_defined_browse
 
+    label_load_setup_user_defined_filename
+    entry_load_setup_user_defined_filename
+    button_load_setup_user_defined_load
+
+    checkbutton_modify_label
+    checkbutton_modify_timebase
+    checkbutton_modify_voltage
+
+    combobox_load_setup_standard_interface
+    combobox_load_setup_standard_subfolder
+    combobox_load_setup_standard_files
+    button_load_setup_standard_load
 
 
 
