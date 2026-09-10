@@ -3181,15 +3181,17 @@ def main_window(scope_ip):
     checkbutton_modify_voltage= ttk.Checkbutton(
         master= frame_load_setup_3, text= 'Voltage', variable= boolvar_modify_voltage)
 
+    strvar_load_setup_standard_interface= tk.StringVar()
     combobox_load_setup_standard_interface= ttk.Combobox(
-        
-    )
+        master= frame_load_setup_4, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_standard_interface, style= 'TCombobox', justify= 'center')
+    strvar_load_setup_standard_subfolder= tk.StringVar()
     combobox_load_setup_standard_subfolder= ttk.Combobox(
+        master= frame_load_setup_4, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_standard_subfolder, style= 'TCombobox', justify= 'center')
 
-    )
+    strvar_load_setup_standard_files= tk.StringVar()
     combobox_load_setup_standard_files= ttk.Combobox(
+        master= frame_load_setup_4, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_standard_files, style= 'TCombobox', justify= 'center')
 
-    )
     button_load_setup_standard_load= ttk.Button(
         master= frame_load_setup_4, text= 'Load', width= button_width_scale_area,  padding= 1,)
 
