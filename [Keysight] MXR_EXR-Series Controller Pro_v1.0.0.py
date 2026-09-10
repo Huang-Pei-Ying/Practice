@@ -3147,15 +3147,18 @@ def main_window(scope_ip):
 
     intvar_load_setup_loadlocation= tk.IntVar()
     radiobutton_load_setup_loacation_scope= ttk.Radiobutton(
-        master= frame_load_setup_2, text= 'Scope Desktop', value= 0, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
+        master= frame_load_setup_1, text= 'Scope Desktop', value= 0, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
     radiobutton_load_setup_loacation_server= ttk.Radiobutton(
-        master= frame_load_setup_2, text= 'Server', value= 1, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
-
-    combobox_load_setup_loacation_server= ttk.Combobox()
+        master= frame_load_setup_1, text= 'Server', value= 1, variable= intvar_load_setup_loadlocation, style= 'radiobutton_2.TRadiobutton')
+    strvar_load_setup_loacation_server= tk.StringVar()
+    combobox_load_setup_loacation_server= ttk.Combobox(
+        master= frame_load_setup_1, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_loacation_server, style= 'TCombobox', justify= 'center')
+    execute_commbobox_function(
+        combobox= combobox_load_setup_loacation_server, combobox_var= strvar_load_setup_loacation_server, ini_dict_key= 'LoadSetupScopeSegment', ini_option_section= 'Scope_Server_Segment', ini_option_key= 'LoadSetupScopeSegment', ini_selected_section= 'Scope_Server_Segment_Selected_Values')
 
     label_load_setup_user_defined_folder= tk.Label(
-
-    )
+        master= frame_load_setup_2, text= 'Folder', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
     strvar_load_setup_user_defined_folder= tk.StringVar()
     entry_load_setup_user_defined_folder= ttk.Entry(
         master= frame_load_setup_2, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_user_defined_folder)
@@ -3163,8 +3166,8 @@ def main_window(scope_ip):
         master= frame_load_setup_2, text= 'Browse', width= button_width_scale_area,  padding= 1,)
 
     label_load_setup_user_defined_filename= tk.Label(
-
-    )
+        master= frame_load_setup_2, text= 'File Name', background= colors['label'][0], fg= colors['label'][1], font= ('Candara', 11,),
+        ) 
     strvar_load_setup_user_defined_filename= tk.StringVar()
     entry_load_setup_user_defined_filename= ttk.Entry(
         master= frame_load_setup_2, width= max(10, int(entry_width_scale_area*0.4)), textvariable= strvar_load_setup_user_defined_filename)
@@ -3397,7 +3400,7 @@ def main_window(scope_ip):
     frame_load_setup_1.rowconfigure(1, weight= 1, uniform= 'row')
     frame_load_setup_1.columnconfigure(0, weight= 1, uniform= 'col')
     frame_load_setup_1.columnconfigure(1, weight= 1, uniform= 'col')
-    frame_load_setup_1.columnconfigure(2, weight= 1, uniform= 'col')
+    frame_load_setup_1.columnconfigure(2, weight= 2, uniform= 'col')
 
     frame_load_setup_2.rowconfigure(0, weight= 1, uniform= 'row')
     frame_load_setup_2.rowconfigure(1, weight= 1, uniform= 'row')
@@ -3664,12 +3667,12 @@ def main_window(scope_ip):
     ###########################
     ### Save Image – in PC ==============================================================================================================================================
     label_save_img_pcfolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    entry_save_img_pcfolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
-    button_browse_img_pcfolder.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_img_pcfolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'ew')
+    button_browse_img_pcfolder.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'ew')
     
     label_save_img_name.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    entry_save_img_name.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
-    button_save_img_name.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_img_name.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'ew')
+    button_save_img_name.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'ew')
 
     ###########################
     ### Save Others – in Scope ==============================================================================================================================================
@@ -3678,21 +3681,21 @@ def main_window(scope_ip):
 
     radiobutton_save_others_scopedesktop.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
     radiobutton_save_others_server.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
-    combobox_save_others_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nsw')
+    combobox_save_others_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'ew')
 
     radiobutton_save_others_wfmfile.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
     radiobutton_save_others_setupfile.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
 
     label_save_others_scopefolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    entry_save_others_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw', columnspan= 3)
-    button_save_others_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_others_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'ew', columnspan= 3)
+    button_save_others_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'ew')
 
     label_save_others_channel.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    combobox_save_others_channel.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_save_others_channel.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'ew')
     
     label_save_others_filename.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
-    entry_save_others_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'nesw')
-    button_save_others_filename_save.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
+    entry_save_others_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'ew')
+    button_save_others_filename_save.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'ew')
 
     ###########################
     ### Load Wmemory ==============================================================================================================================================
@@ -3701,50 +3704,50 @@ def main_window(scope_ip):
 
     radiobutton_load_waveform_scopedesktop.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
     radiobutton_load_waveform_server.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
-    combobox_load_waveform_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nsw')
+    combobox_load_waveform_server_segment.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'ew')
 
     label_load_waveform_scopefolder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    entry_load_waveform_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw', columnspan= 3)
-    button_load_waveform_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'nesw', columnspan= 2)
+    entry_load_waveform_scopefolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'ew', columnspan= 3)
+    button_load_waveform_browse_scopefolder.grid(row= 0, column= 4, padx= 2, pady= 2, sticky= 'ew', columnspan= 2)
 
     label_load_waveform_wmemory.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
-    combobox_load_waveform_wmemory.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_load_waveform_wmemory.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'ew')
     
     label_load_waveform_filename.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'nesw')
-    entry_load_waveform_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'nesw')
-    button_load_waveform_filename_load.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'nesw')
-    button_load_waveform_filename_clear.grid(row= 1, column= 5, padx= 2, pady= 2, sticky= 'nesw')
+    entry_load_waveform_filename.grid(row= 1, column= 3, padx= 2, pady= 2, sticky= 'ew')
+    button_load_waveform_filename_load.grid(row= 1, column= 4, padx= 2, pady= 2, sticky= 'ew')
+    button_load_waveform_filename_clear.grid(row= 1, column= 5, padx= 2, pady= 2, sticky= 'ew')
 
     ###########################
     ### Load Setup ==============================================================================================================================================
-    frame_load_setup_1
-    frame_load_setup_2
-    frame_load_setup_3
-    frame_load_setup_4
+    frame_load_setup_1.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_load_setup_2.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_load_setup_3.grid(row= 2, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    frame_load_setup_4.grid(row= 3, column= 0, padx= 2, pady= 2, sticky= 'nesw')
 
-    radiobutton_load_setup_user_defined
-    radiobutton_load_setup_standard
+    radiobutton_load_setup_user_defined.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_load_setup_standard.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw', columnspan= 2)
 
-    radiobutton_load_setup_loacation_scope
-    radiobutton_load_setup_loacation_server
-    combobox_load_setup_loacation_server
+    radiobutton_load_setup_loacation_scope.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    radiobutton_load_setup_loacation_server.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    combobox_load_setup_loacation_server.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'w')
 
-    label_load_setup_user_defined_folder
-    entry_load_setup_user_defined_folder
-    button_load_setup_user_defined_browse
+    label_load_setup_user_defined_folder.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_load_setup_user_defined_folder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'ew')
+    button_load_setup_user_defined_browse.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'ew')
 
-    label_load_setup_user_defined_filename
-    entry_load_setup_user_defined_filename
-    button_load_setup_user_defined_load
+    label_load_setup_user_defined_filename.grid(row= 1, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    entry_load_setup_user_defined_filename.grid(row= 1, column= 1, padx= 2, pady= 2, sticky= 'ew')
+    button_load_setup_user_defined_load.grid(row= 1, column= 2, padx= 2, pady= 2, sticky= 'ew')
 
-    checkbutton_modify_label
-    checkbutton_modify_timebase
-    checkbutton_modify_voltage
+    checkbutton_modify_label.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_modify_timebase.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'nesw')
+    checkbutton_modify_voltage.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'nesw')
 
-    combobox_load_setup_standard_interface
-    combobox_load_setup_standard_subfolder
-    combobox_load_setup_standard_files
-    button_load_setup_standard_load
+    combobox_load_setup_standard_interface.grid(row= 0, column= 0, padx= 2, pady= 2, sticky= 'ew')
+    combobox_load_setup_standard_subfolder.grid(row= 0, column= 1, padx= 2, pady= 2, sticky= 'ew')
+    combobox_load_setup_standard_files.grid(row= 0, column= 2, padx= 2, pady= 2, sticky= 'ew')
+    button_load_setup_standard_load.grid(row= 0, column= 3, padx= 2, pady= 2, sticky= 'ew')
 
 
 
