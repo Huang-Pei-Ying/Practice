@@ -13,6 +13,8 @@ import random
 import string
 import ctypes
 from tkinter import font
+from pathlib import Path
+
 
 
 window_name= '[Keysight] MXR/EXR-Series Controller Pro_v1.0.0'
@@ -157,6 +159,11 @@ def show_main_window(old_scope_ips):
 def main_window(scope_ip):
 
     def initialize():
+
+        eric_team_path = fr'#_Eric Team'
+        global disk_segment
+        disk_segment = find_disk_segment(path= eric_team_path)
+
         config_initial = configparser.ConfigParser()
         config_initial.optionxform = str
         config_initial.read(os.path.join(os.path.dirname(__file__), 'InitConfig_setup_new.ini'), encoding='UTF-8',)
@@ -189,14 +196,14 @@ def main_window(scope_ip):
         SamplingRate = config_initial['Acquisition']['SamplingRate']
         MemoryDepth = config_initial['Acquisition']['MemoryDepth']
 
-        ChanLabel1 = config_initial['Lable_Setup_Config']['ChanLabel1']
-        ChanLabel2 = config_initial['Lable_Setup_Config']['ChanLabel2']
-        ChanLabel3 = config_initial['Lable_Setup_Config']['ChanLabel3']
-        ChanLabel4 = config_initial['Lable_Setup_Config']['ChanLabel4']
-        WMeLabel1 = config_initial['Lable_Setup_Config']['WMeLabel1']
-        WMeLabel2 = config_initial['Lable_Setup_Config']['WMeLabel2']
-        WMeLabel3 = config_initial['Lable_Setup_Config']['WMeLabel3']
-        WMeLabel4 = config_initial['Lable_Setup_Config']['WMeLabel4']
+        ChanLabel1 = config_initial['Label_Setup_Config']['ChanLabel1']
+        ChanLabel2 = config_initial['Label_Setup_Config']['ChanLabel2']
+        ChanLabel3 = config_initial['Label_Setup_Config']['ChanLabel3']
+        ChanLabel4 = config_initial['Label_Setup_Config']['ChanLabel4']
+        WMeLabel1 = config_initial['Label_Setup_Config']['WMeLabel1']
+        WMeLabel2 = config_initial['Label_Setup_Config']['WMeLabel2']
+        WMeLabel3 = config_initial['Label_Setup_Config']['WMeLabel3']
+        WMeLabel4 = config_initial['Label_Setup_Config']['WMeLabel4']
 
         ChanSingle = config_initial['Chan_Delta']['ChanSingle']
         ChanStart = config_initial['Chan_Delta']['ChanStart']
@@ -286,12 +293,12 @@ def main_window(scope_ip):
         # strvar_setupfile_interface.set(value= SetupFileInterface)
         # strvar_setupfile_class.set(value= SetupFileClass)
         # strvar_setup.set(value= LoadSetup)
-        # # if SetupFileInterface == '' or SetupFileInterface == 'User':
-        # #     cbb_setupfile_class.config(state= 'disabled')
-        #     # cbb_setup.config(state= 'disabled')
-        # combobox_setupfile_interface.config(values= setupfile_interface_list)
-        select_setupfile_interface(event= combobox_load_setup_standard_interface.bind("<<ComboboxSelected>>"))
-        select_setupfile_class(event= combobox_load_setup_standard_subfolder.bind("<<ComboboxSelected>>"))
+        if SetupFileInterface == '' or SetupFileInterface == 'User':
+            combobox_load_setup_standard_subfolder.config(state= 'disabled')
+            combobox_load_setup_standard_files.config(state= 'disabled')
+        combobox_load_setup_standard_interface.config(values= setupfile_interface_list)
+        # select_setupfile_interface(event= combobox_load_setup_standard_interface.bind("<<ComboboxSelected>>"), pc_segment= disk_segment)
+        # select_setupfile_interface_subfolder(event= combobox_load_setup_standard_subfolder.bind("<<ComboboxSelected>>"), pc_segment= disk_segment)
 
         # move_mouse_entry_end(entry= entry_wmemory_folder)
         # move_mouse_entry_end(entry= entry_wmemory_pc_folder)
@@ -1861,9 +1868,9 @@ def main_window(scope_ip):
 
         move_mouse_entry_end(entry= target_entry)
 
-    def select_setupfile_class(event):
+    def select_setupfile_interface_subfolder(event, pc_segment):
 
-        target_class_files= []
+        target_interface_subfolder_files= []
 
         strvar_load_setup_standard_files.set(value= '')
 
@@ -1872,7 +1879,7 @@ def main_window(scope_ip):
         # str_WMe_folder.set(value= setupfile_class_folderpath)
 
         # PC folder路徑
-        pc_setupfile_class_folderpath = fr'{}:\#_Eric Team\02_Penny\Setup_Files_Collection\{strvar_load_setup_standard_interface.get()}\{strvar_load_setup_standard_subfolder.get()}'
+        pc_setupfile_class_folderpath = fr'{pc_segment}#_Eric Team\02_Penny\Setup_Files_Collection\{strvar_load_setup_standard_interface.get()}\{strvar_load_setup_standard_subfolder.get()}'
 
         # os.walk 會回傳 root (目前路徑), dirs (子資料夾名稱列表), files (檔案名稱列表)
         for root, dirs, files in os.walk(pc_setupfile_class_folderpath):
@@ -1881,12 +1888,12 @@ def main_window(scope_ip):
                 if file.endswith('.set'):
                     # 取得設定檔的絕對路徑
                     file_path = os.path.join(root, file)
-                    target_class_files.append((os.path.basename(file_path)).rstrip('.set'))
+                    target_interface_subfolder_files.append((os.path.basename(file_path)).rstrip('.set'))
 
-        combobox_load_setup_standard_files.config(values= target_class_files)
+        combobox_load_setup_standard_files.config(values= target_interface_subfolder_files)
         # adjust_entry(entry= e_WMe_folder)
 
-    def select_setupfile_interface(event):
+    def select_setupfile_interface(event, pc_segment):
         
         target_interface_subfolder= []
 
@@ -1906,7 +1913,7 @@ def main_window(scope_ip):
             # str_WMe_folder.set(value= setupfile_interface_folderpath)
 
             # PC folder路徑
-            pc_setupfile_interface_folderpath = fr'{}:\#_Eric Team\02_Penny\Setup_Files_Collection\{strvar_load_setup_standard_interface.get()}'
+            pc_setupfile_interface_folderpath = fr'{pc_segment}#_Eric Team\02_Penny\Setup_Files_Collection\{strvar_load_setup_standard_interface.get()}'
 
             # os.walk 會回傳 root (目前路徑), dirs (子資料夾名稱列表), files (檔案名稱列表)
             for root, dirs, files in os.walk(pc_setupfile_interface_folderpath):
@@ -1917,6 +1924,17 @@ def main_window(scope_ip):
 
             combobox_load_setup_standard_subfolder.config(values= target_interface_subfolder)
             # adjust_entry(entry= e_WMe_folder)
+    
+    def find_disk_segment(path):
+        for seg in string.ascii_uppercase:
+            disk = Path(f"{seg}:\\")
+            
+            if disk.exists():
+                full_path = disk / path
+                
+                if full_path.is_dir():
+                    return disk
+        return None
     
     def set_to_fixty():
         value = 50
@@ -4785,7 +4803,7 @@ def main_window(scope_ip):
     # ToolTip(text_result_minmax_9, '芭樂綠茶')
     # ToolTip(text_result_mean_12, '多多檢查')
 
-    # segment_list= initialize()
+    initialize()
     
 
     button_load_setup_standard_load = ttk.Button(
@@ -4808,8 +4826,8 @@ def main_window(scope_ip):
     button_load_setup_standard_load.grid(row= 0, column= 3, padx= 5, pady= 2, sticky= 'ew')
     
     # cbb_setupfile_interface.config(values= setupfile_interface_list)
-    combobox_load_setup_standard_interface.bind("<<ComboboxSelected>>", lambda e: select_setupfile_interface(e))
-    combobox_load_setup_standard_subfolder.bind("<<ComboboxSelected>>", lambda e: select_setupfile_class(e))
+    combobox_load_setup_standard_interface.bind("<<ComboboxSelected>>", lambda e: select_setupfile_interface(e, pc_segment= disk_segment))
+    combobox_load_setup_standard_subfolder.bind("<<ComboboxSelected>>", lambda e: select_setupfile_interface_subfolder(e, pc_segment= disk_segment))
 
     window.protocol('WM_DELETE_WINDOW', close_window)
 
